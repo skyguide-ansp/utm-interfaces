@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package utm;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/skyguide-ansp/utm-interfaces/utm";
+
+
+// track to be used as observation for amoebas
+message Track {
+
+  message Accuracy {
+    double position_x               = 1;  // Estimated Accuracy Of Track Position - X - horizontal dilution
+    double position_y               = 2;  // Estimated Accuracy Of Track Position - Y - vertical dilution
+    double latitude                 = 3;
+    double longitude                = 4;
+    double geometric_altitude       = 5;
+    double barometric_altitude      = 6;
+    double velocity_x               = 7;
+    double velocity_y               = 8;
+    double acceleration_x           = 9;
+    double acceleration_y           = 10;
+    double rate_of_climb            = 11;
+  }
+
+  bytes raw                               = 1;    // raw message
+
+  // sender
+  string provider_id                      = 11;   // Name of the facility that reported the observation.
+  string source_id                        = 12;   // sensor source identifiers (traffic)
+  string asterix_category                 = 14;   // asterix category
+
+  // identification informations
+  string track_id                         = 21;  // source specific track identifier for traffic - aka - Track Number
+  string callsign                         = 22;  // Callsign of the vehicle.
+  string icao_aircraft_descriptor         = 23;  // Aircraft-specific ICAO-information.
+  string aircraft_type                    = 24;  // aircraft_type
+  Emitter emitter_category                = 25;  // emitter category
+
+  // times
+  google.protobuf.Timestamp timestamp     = 31;   // The time when the update was observed by the client.
+
+  // measures
+  Coordinate position                     = 41;  // latitude, longitude, altitude
+  Velocity velocity_ms                    = 42;  // Velocity of the vehicle expressed as XYZ vectors, in [m/s]
+  double groud_speed_ms                   = 43;  // Speed of the vehicle relative to the ground in meters per second
+  double vertical_speed_ms                = 44;  // Vertical speed of the vehicle, in meters per second.
+  double heading_degrees                  = 45;  // heading of the plane (=course), angle from True North, 0-360, counterclockwise
+
+  // accuracy
+  optional Accuracy accuracy              = 50;  // measurement accuracies
+}
+
+message Velocity {
+  double x = 1;  // The velocity along the X axis.
+  double y = 2;  // The velocity along the Y axis.
+  double z = 3;  // The velocity along the Z axis. (i.e vertical speed, expected in m.m.s-1.s-1
+}
+
+message Coordinate {
+  double latitude_degrees  = 1;  // The latitude component of this coordinate.
+  double longitude_degrees = 2;  // The longitude component of this coordinate.
+  Altitude altitude        = 3;  // The altitude component of this coordinate.
+}
+
+// Altitude models height over reference point.
+message Altitude {
+  enum Reference {
+    REFERENCE_UNKNOWN   = 0;      // The unknown reference.
+    REFERENCE_ELLIPSOID = 1;      // References the hypothetical equipotential gravitational surface.
+    REFERENCE_GEOID     = 2;      // References and approximates the mean sea level.
+    REFERENCE_SURFACE   = 3;      // References the actual height of the surface.
+    REFERENCE_EXTERNAL  = 4;      // References an external measurement or estimate.
+    REFERENCE_STANDARD_BARO = 5;  // References a flight level (FL).
+    REFERENCE_LOCAL_BARO    = 6;  // References a local MSL.
+  }
+
+  double meters       = 3;  // The actual value.
+  Reference reference = 4;  // The reference for the altitude of this coordinate.
+}
+
+enum Emitter {
+  EMITTER_UNKNOWN = 0; // unknown
+  EMITTER_LIGHT_AIRCRAFT = 1; // light aircraft <= 15500 lbs
+  EMITTER_SMALL_AIRCRAFT = 2; // 15500 lbs < small aircraft < 75000 lbs
+  EMITTER_MEDIUM_AIRCRAFT = 3; // 75000 lbs < medium aircraft < 300000 lbs
+  EMITTER_LARGE_AIRCRAFT = 4; // high vortex, large aircraft
+  EMITTER_HEAVY_AIRCAFT = 5; // >= 300000 lbs
+  EMITTER_HIGHLY_MANUEVERABLE = 6; // highly maneuverable (5g capability) and high speed (400+ knots cruise)
+  // reserved 7 to 9;
+  EMITTER_ROTORCRAFT = 10; // helicopter / rotocraft
+  EMITTER_GLIDER = 11; // glider / sailplane
+  EMITTER_LIGHTER_THAN_AIR = 12; // lighter than air / blimp
+  EMITTER_UAV = 13; // unmanned aerial vehicle
+  EMITTER_SPACE = 14; // space / transatmospheric vehicle
+  EMITTER_ULTRALIGHT = 15; // ultralight / hang glider / paraglider
+  EMITTER_PARACHUTIST = 16; // parachutist / skydiver
+  // reserved 17 to 19;
+  EMITTER_SFC_EMERGENCY_VEHICLE = 20; // surface emergency vehicle
+  EMITTER_SFC_SERVICE_VEHICLE = 21; // surface service vehicle
+  EMITTER_SFC_OBSTACLE = 22; // fixed ground or tethered obstacle
+  EMITTER_SFC_OBSTACLE_CLUSTER = 23; // cluster obstacle
+  EMITTER_SFC_OBSTACLE_LINE = 24; // line obstacle
+}
+
+// grpc server is assumed to be on platform side
+service TrafficCollector {
+  rpc CollectTraffic(stream Track) returns (google.protobuf.Empty);
+}
