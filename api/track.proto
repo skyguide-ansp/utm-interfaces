@@ -53,7 +53,7 @@ message Track {
 }
 
 message MetersPerSecond {
-  double value = 1;  // The velocity along the Z axis. (i.e vertical speed, expected in m.m.s-1.s-1
+  double value = 1;  // any value in meters per second
 }
 
 message HeadingDegrees {
