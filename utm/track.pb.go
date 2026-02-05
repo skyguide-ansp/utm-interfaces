@@ -347,7 +347,7 @@ func (x *Track) GetAccuracy() *Track_Accuracy {
 
 type MetersPerSecond struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         float64                `protobuf:"fixed64,1,opt,name=value,proto3" json:"value,omitempty"` // The velocity along the Z axis. (i.e vertical speed, expected in m.m.s-1.s-1
+	Value         float64                `protobuf:"fixed64,1,opt,name=value,proto3" json:"value,omitempty"` // any value in meters per second
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
