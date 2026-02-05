@@ -44,19 +44,20 @@ message Track {
 
   // measures
   Coordinate position                     = 41;  // latitude, longitude, altitude
-  Velocity velocity_ms                    = 42;  // Velocity of the vehicle expressed as XYZ vectors, in [m/s]
-  double groud_speed_ms                   = 43;  // Speed of the vehicle relative to the ground in meters per second
-  double vertical_speed_ms                = 44;  // Vertical speed of the vehicle, in meters per second.
-  double heading_degrees                  = 45;  // heading of the plane (=course), angle from True North, 0-360, counterclockwise
+  MetersPerSecond vertical_speed          = 42;  // Vertical speed of the vehicle, in meters per second.
+  MetersPerSecond groud_speed             = 43;  // Speed of the vehicle relative to the ground in meters per second
+  HeadingDegrees heading                  = 44;  // heading of the plane (=course), angle from True North, 0-360, counterclockwise
 
   // accuracy
   optional Accuracy accuracy              = 50;  // measurement accuracies
 }
 
-message Velocity {
-  double x = 1;  // The velocity along the X axis.
-  double y = 2;  // The velocity along the Y axis.
-  double z = 3;  // The velocity along the Z axis. (i.e vertical speed, expected in m.m.s-1.s-1
+message MetersPerSecond {
+  double value = 1;  // any value in meters per second
+}
+
+message HeadingDegrees {
+  double value = 1;  // Heading of the plane, 0 is true north, clockwise
 }
 
 message Coordinate {
