@@ -7,14 +7,13 @@
 package utm
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -181,7 +180,7 @@ func (x Altitude_Reference) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Altitude_Reference.Descriptor instead.
 func (Altitude_Reference) EnumDescriptor() ([]byte, []int) {
-	return file_track_proto_rawDescGZIP(), []int{3, 0}
+	return file_track_proto_rawDescGZIP(), []int{4, 0}
 }
 
 // track to be used as observation for amoebas
@@ -201,11 +200,10 @@ type Track struct {
 	// times
 	Timestamp *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=timestamp,proto3" json:"timestamp,omitempty"` // The time when the update was observed by the client.
 	// measures
-	Position        *Coordinate `protobuf:"bytes,41,opt,name=position,proto3" json:"position,omitempty"`                                          // latitude, longitude, altitude
-	VelocityMs      *Velocity   `protobuf:"bytes,42,opt,name=velocity_ms,json=velocityMs,proto3" json:"velocity_ms,omitempty"`                    // Velocity of the vehicle expressed as XYZ vectors, in [m/s]
-	GroudSpeedMs    float64     `protobuf:"fixed64,43,opt,name=groud_speed_ms,json=groudSpeedMs,proto3" json:"groud_speed_ms,omitempty"`          // Speed of the vehicle relative to the ground in meters per second
-	VerticalSpeedMs float64     `protobuf:"fixed64,44,opt,name=vertical_speed_ms,json=verticalSpeedMs,proto3" json:"vertical_speed_ms,omitempty"` // Vertical speed of the vehicle, in meters per second.
-	HeadingDegrees  float64     `protobuf:"fixed64,45,opt,name=heading_degrees,json=headingDegrees,proto3" json:"heading_degrees,omitempty"`      // heading of the plane (=course), angle from True North, 0-360, counterclockwise
+	Position      *Coordinate      `protobuf:"bytes,41,opt,name=position,proto3" json:"position,omitempty"`                                // latitude, longitude, altitude
+	VerticalSpeed *MetersPerSecond `protobuf:"bytes,42,opt,name=vertical_speed,json=verticalSpeed,proto3" json:"vertical_speed,omitempty"` // Vertical speed of the vehicle, in meters per second.
+	GroudSpeed    *MetersPerSecond `protobuf:"bytes,43,opt,name=groud_speed,json=groudSpeed,proto3" json:"groud_speed,omitempty"`          // Speed of the vehicle relative to the ground in meters per second
+	Heading       *HeadingDegrees  `protobuf:"bytes,44,opt,name=heading,proto3" json:"heading,omitempty"`                                  // heading of the plane (=course), angle from True North, 0-360, counterclockwise
 	// accuracy
 	Accuracy      *Track_Accuracy `protobuf:"bytes,50,opt,name=accuracy,proto3,oneof" json:"accuracy,omitempty"` // measurement accuracies
 	unknownFields protoimpl.UnknownFields
@@ -319,32 +317,25 @@ func (x *Track) GetPosition() *Coordinate {
 	return nil
 }
 
-func (x *Track) GetVelocityMs() *Velocity {
+func (x *Track) GetVerticalSpeed() *MetersPerSecond {
 	if x != nil {
-		return x.VelocityMs
+		return x.VerticalSpeed
 	}
 	return nil
 }
 
-func (x *Track) GetGroudSpeedMs() float64 {
+func (x *Track) GetGroudSpeed() *MetersPerSecond {
 	if x != nil {
-		return x.GroudSpeedMs
+		return x.GroudSpeed
 	}
-	return 0
+	return nil
 }
 
-func (x *Track) GetVerticalSpeedMs() float64 {
+func (x *Track) GetHeading() *HeadingDegrees {
 	if x != nil {
-		return x.VerticalSpeedMs
+		return x.Heading
 	}
-	return 0
-}
-
-func (x *Track) GetHeadingDegrees() float64 {
-	if x != nil {
-		return x.HeadingDegrees
-	}
-	return 0
+	return nil
 }
 
 func (x *Track) GetAccuracy() *Track_Accuracy {
@@ -354,29 +345,27 @@ func (x *Track) GetAccuracy() *Track_Accuracy {
 	return nil
 }
 
-type Velocity struct {
+type MetersPerSecond struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	X             float64                `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"` // The velocity along the X axis.
-	Y             float64                `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"` // The velocity along the Y axis.
-	Z             float64                `protobuf:"fixed64,3,opt,name=z,proto3" json:"z,omitempty"` // The velocity along the Z axis. (i.e vertical speed, expected in m.m.s-1.s-1
+	Value         float64                `protobuf:"fixed64,1,opt,name=value,proto3" json:"value,omitempty"` // The velocity along the Z axis. (i.e vertical speed, expected in m.m.s-1.s-1
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Velocity) Reset() {
-	*x = Velocity{}
+func (x *MetersPerSecond) Reset() {
+	*x = MetersPerSecond{}
 	mi := &file_track_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Velocity) String() string {
+func (x *MetersPerSecond) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Velocity) ProtoMessage() {}
+func (*MetersPerSecond) ProtoMessage() {}
 
-func (x *Velocity) ProtoReflect() protoreflect.Message {
+func (x *MetersPerSecond) ProtoReflect() protoreflect.Message {
 	mi := &file_track_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -388,28 +377,58 @@ func (x *Velocity) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Velocity.ProtoReflect.Descriptor instead.
-func (*Velocity) Descriptor() ([]byte, []int) {
+// Deprecated: Use MetersPerSecond.ProtoReflect.Descriptor instead.
+func (*MetersPerSecond) Descriptor() ([]byte, []int) {
 	return file_track_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Velocity) GetX() float64 {
+func (x *MetersPerSecond) GetValue() float64 {
 	if x != nil {
-		return x.X
+		return x.Value
 	}
 	return 0
 }
 
-func (x *Velocity) GetY() float64 {
-	if x != nil {
-		return x.Y
-	}
-	return 0
+type HeadingDegrees struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         float64                `protobuf:"fixed64,1,opt,name=value,proto3" json:"value,omitempty"` // Heading of the plane, 0 is true north, clockwise
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Velocity) GetZ() float64 {
+func (x *HeadingDegrees) Reset() {
+	*x = HeadingDegrees{}
+	mi := &file_track_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HeadingDegrees) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeadingDegrees) ProtoMessage() {}
+
+func (x *HeadingDegrees) ProtoReflect() protoreflect.Message {
+	mi := &file_track_proto_msgTypes[2]
 	if x != nil {
-		return x.Z
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeadingDegrees.ProtoReflect.Descriptor instead.
+func (*HeadingDegrees) Descriptor() ([]byte, []int) {
+	return file_track_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *HeadingDegrees) GetValue() float64 {
+	if x != nil {
+		return x.Value
 	}
 	return 0
 }
@@ -425,7 +444,7 @@ type Coordinate struct {
 
 func (x *Coordinate) Reset() {
 	*x = Coordinate{}
-	mi := &file_track_proto_msgTypes[2]
+	mi := &file_track_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -437,7 +456,7 @@ func (x *Coordinate) String() string {
 func (*Coordinate) ProtoMessage() {}
 
 func (x *Coordinate) ProtoReflect() protoreflect.Message {
-	mi := &file_track_proto_msgTypes[2]
+	mi := &file_track_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -450,7 +469,7 @@ func (x *Coordinate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Coordinate.ProtoReflect.Descriptor instead.
 func (*Coordinate) Descriptor() ([]byte, []int) {
-	return file_track_proto_rawDescGZIP(), []int{2}
+	return file_track_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Coordinate) GetLatitudeDegrees() float64 {
@@ -485,7 +504,7 @@ type Altitude struct {
 
 func (x *Altitude) Reset() {
 	*x = Altitude{}
-	mi := &file_track_proto_msgTypes[3]
+	mi := &file_track_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -497,7 +516,7 @@ func (x *Altitude) String() string {
 func (*Altitude) ProtoMessage() {}
 
 func (x *Altitude) ProtoReflect() protoreflect.Message {
-	mi := &file_track_proto_msgTypes[3]
+	mi := &file_track_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -510,7 +529,7 @@ func (x *Altitude) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Altitude.ProtoReflect.Descriptor instead.
 func (*Altitude) Descriptor() ([]byte, []int) {
-	return file_track_proto_rawDescGZIP(), []int{3}
+	return file_track_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Altitude) GetMeters() float64 {
@@ -546,7 +565,7 @@ type Track_Accuracy struct {
 
 func (x *Track_Accuracy) Reset() {
 	*x = Track_Accuracy{}
-	mi := &file_track_proto_msgTypes[4]
+	mi := &file_track_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -558,7 +577,7 @@ func (x *Track_Accuracy) String() string {
 func (*Track_Accuracy) ProtoMessage() {}
 
 func (x *Track_Accuracy) ProtoReflect() protoreflect.Message {
-	mi := &file_track_proto_msgTypes[4]
+	mi := &file_track_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -655,7 +674,7 @@ var File_track_proto protoreflect.FileDescriptor
 
 const file_track_proto_rawDesc = "" +
 	"\n" +
-	"\vtrack.proto\x12\x03utm\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xbb\b\n" +
+	"\vtrack.proto\x12\x03utm\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xb3\b\n" +
 	"\x05Track\x12\x10\n" +
 	"\x03raw\x18\x01 \x01(\fR\x03raw\x12\x1f\n" +
 	"\vprovider_id\x18\v \x01(\tR\n" +
@@ -668,12 +687,11 @@ const file_track_proto_rawDesc = "" +
 	"\raircraft_type\x18\x18 \x01(\tR\faircraftType\x127\n" +
 	"\x10emitter_category\x18\x19 \x01(\x0e2\f.utm.EmitterR\x0femitterCategory\x128\n" +
 	"\ttimestamp\x18\x1f \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12+\n" +
-	"\bposition\x18) \x01(\v2\x0f.utm.CoordinateR\bposition\x12.\n" +
-	"\vvelocity_ms\x18* \x01(\v2\r.utm.VelocityR\n" +
-	"velocityMs\x12$\n" +
-	"\x0egroud_speed_ms\x18+ \x01(\x01R\fgroudSpeedMs\x12*\n" +
-	"\x11vertical_speed_ms\x18, \x01(\x01R\x0fverticalSpeedMs\x12'\n" +
-	"\x0fheading_degrees\x18- \x01(\x01R\x0eheadingDegrees\x124\n" +
+	"\bposition\x18) \x01(\v2\x0f.utm.CoordinateR\bposition\x12;\n" +
+	"\x0evertical_speed\x18* \x01(\v2\x14.utm.MetersPerSecondR\rverticalSpeed\x125\n" +
+	"\vgroud_speed\x18+ \x01(\v2\x14.utm.MetersPerSecondR\n" +
+	"groudSpeed\x12-\n" +
+	"\aheading\x18, \x01(\v2\x13.utm.HeadingDegreesR\aheading\x124\n" +
 	"\baccuracy\x182 \x01(\v2\x13.utm.Track.AccuracyH\x00R\baccuracy\x88\x01\x01\x1a\x92\x03\n" +
 	"\bAccuracy\x12\x1d\n" +
 	"\n" +
@@ -692,11 +710,11 @@ const file_track_proto_rawDesc = "" +
 	"\x0eacceleration_y\x18\n" +
 	" \x01(\x01R\raccelerationY\x12\"\n" +
 	"\rrate_of_climb\x18\v \x01(\x01R\vrateOfClimbB\v\n" +
-	"\t_accuracy\"4\n" +
-	"\bVelocity\x12\f\n" +
-	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x01R\x01y\x12\f\n" +
-	"\x01z\x18\x03 \x01(\x01R\x01z\"\x8f\x01\n" +
+	"\t_accuracy\"'\n" +
+	"\x0fMetersPerSecond\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\x01R\x05value\"&\n" +
+	"\x0eHeadingDegrees\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\x01R\x05value\"\x8f\x01\n" +
 	"\n" +
 	"Coordinate\x12)\n" +
 	"\x10latitude_degrees\x18\x01 \x01(\x01R\x0flatitudeDegrees\x12+\n" +
@@ -751,33 +769,36 @@ func file_track_proto_rawDescGZIP() []byte {
 }
 
 var file_track_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_track_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_track_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_track_proto_goTypes = []any{
 	(Emitter)(0),                  // 0: utm.Emitter
 	(Altitude_Reference)(0),       // 1: utm.Altitude.Reference
 	(*Track)(nil),                 // 2: utm.Track
-	(*Velocity)(nil),              // 3: utm.Velocity
-	(*Coordinate)(nil),            // 4: utm.Coordinate
-	(*Altitude)(nil),              // 5: utm.Altitude
-	(*Track_Accuracy)(nil),        // 6: utm.Track.Accuracy
-	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 8: google.protobuf.Empty
+	(*MetersPerSecond)(nil),       // 3: utm.MetersPerSecond
+	(*HeadingDegrees)(nil),        // 4: utm.HeadingDegrees
+	(*Coordinate)(nil),            // 5: utm.Coordinate
+	(*Altitude)(nil),              // 6: utm.Altitude
+	(*Track_Accuracy)(nil),        // 7: utm.Track.Accuracy
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 9: google.protobuf.Empty
 }
 var file_track_proto_depIdxs = []int32{
-	0, // 0: utm.Track.emitter_category:type_name -> utm.Emitter
-	7, // 1: utm.Track.timestamp:type_name -> google.protobuf.Timestamp
-	4, // 2: utm.Track.position:type_name -> utm.Coordinate
-	3, // 3: utm.Track.velocity_ms:type_name -> utm.Velocity
-	6, // 4: utm.Track.accuracy:type_name -> utm.Track.Accuracy
-	5, // 5: utm.Coordinate.altitude:type_name -> utm.Altitude
-	1, // 6: utm.Altitude.reference:type_name -> utm.Altitude.Reference
-	2, // 7: utm.TrafficCollector.CollectTraffic:input_type -> utm.Track
-	8, // 8: utm.TrafficCollector.CollectTraffic:output_type -> google.protobuf.Empty
-	8, // [8:9] is the sub-list for method output_type
-	7, // [7:8] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	0,  // 0: utm.Track.emitter_category:type_name -> utm.Emitter
+	8,  // 1: utm.Track.timestamp:type_name -> google.protobuf.Timestamp
+	5,  // 2: utm.Track.position:type_name -> utm.Coordinate
+	3,  // 3: utm.Track.vertical_speed:type_name -> utm.MetersPerSecond
+	3,  // 4: utm.Track.groud_speed:type_name -> utm.MetersPerSecond
+	4,  // 5: utm.Track.heading:type_name -> utm.HeadingDegrees
+	7,  // 6: utm.Track.accuracy:type_name -> utm.Track.Accuracy
+	6,  // 7: utm.Coordinate.altitude:type_name -> utm.Altitude
+	1,  // 8: utm.Altitude.reference:type_name -> utm.Altitude.Reference
+	2,  // 9: utm.TrafficCollector.CollectTraffic:input_type -> utm.Track
+	9,  // 10: utm.TrafficCollector.CollectTraffic:output_type -> google.protobuf.Empty
+	10, // [10:11] is the sub-list for method output_type
+	9,  // [9:10] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_track_proto_init() }
@@ -792,7 +813,7 @@ func file_track_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_track_proto_rawDesc), len(file_track_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
